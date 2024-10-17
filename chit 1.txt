@@ -1,0 +1,66 @@
+-- Create the Customer table
+CREATE TABLE Customer (
+  C_Id INT PRIMARY KEY,
+  Cname VARCHAR(255),
+  City VARCHAR(255)
+);
+
+-- Insert data into the Customer table
+INSERT INTO Customer (C_Id, Cname, City) VALUES
+  (1, 'John', 'Nashik'),
+  (2, 'Seema', 'Aurangabad'),
+  (3, 'Amita', 'Nagar'),
+  (4, 'Rakesh', 'Pune'),
+  (5, 'Samata', 'Nashik'),
+  (6, 'Ankita', 'Chandwad'),
+  (7, 'Bhavika', 'Pune'),
+  (8, 'Deepa', 'Mumbai'),
+  (9, 'Nitin', 'Nagpur'),
+  (10, 'Pooja', 'Pune');
+
+-- Create the Account table
+CREATE TABLE Account (
+  C_Id INT,
+  Acc_Type VARCHAR(255),
+  Amount INT,
+  FOREIGN KEY (C_Id) REFERENCES Customer(C_Id)
+);
+
+-- Insert data into the Account table
+INSERT INTO Account (C_Id, Acc_Type, Amount) VALUES
+  (1, 'Current', 5000),
+  (2, 'Saving', 20000),
+  (3, 'Saving', 70000),
+  (4, 'Saving', 50000),
+  (6, 'Current', 35000),
+  (7, 'Loan', 30000),
+  (8, 'Saving', 50000),
+  (9, 'Saving', 90000),
+  (10, 'Loan', 8000);
+
+-- Show the cname, Acc_Type, amount information of customer who is having an saving account.
+SELECT c.Cname, a.Acc_Type, a.Amount
+FROM Customer c JOIN Account a ON c.C_Id = a.C_Id
+WHERE a.Acc_Type = 'Saving';
+
+-- Display the data using Natural, left and right join.
+SELECT * FROM Customer NATURAL JOIN Account;
+SELECT * FROM Customer LEFT JOIN Account ON Customer.C_Id = Account.C_Id;
+SELECT * FROM Customer RIGHT JOIN Account ON Customer.C_Id = Account.C_Id;
+
+-- Display the information of customers living in the same city as of 'pooja'.
+SELECT * FROM Customer WHERE City = (SELECT City FROM Customer WHERE Cname = 'Pooja');
+
+-- Display the information of account, having less amount than average amount throughout the bank.
+SELECT * FROM Account WHERE Amount < (SELECT AVG(Amount) FROM Account);
+
+-- Display the C_id having maximum amount in account.
+SELECT C_Id FROM Account ORDER BY Amount DESC LIMIT 1;
+
+-- Display the amount and acc_type of those customers whose amount is the minimum amount of that Acc_type.
+SELECT a.Amount, a.Acc_Type FROM Account a
+WHERE a.Amount = (SELECT MIN(Amount) FROM Account WHERE Acc_Type = a.Acc_Type);
+
+-- Display the amount of those accounts whose amount is higher than amount of any saving account amount.
+SELECT Amount FROM Account
+WHERE Amount > (SELECT MAX(Amount) FROM Account WHERE Acc_Type = 'Saving');

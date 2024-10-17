@@ -1,0 +1,78 @@
+CREATE TABLE student (
+    S_ID INT PRIMARY KEY,
+    name VARCHAR(255),
+    dept_name VARCHAR(255),
+    tot_cred INT
+);
+
+-- Create the instructor table
+CREATE TABLE instructor (
+    T_ID INT PRIMARY KEY,
+    name VARCHAR(255),
+    dept_name VARCHAR(255),
+    salary DECIMAL(10, 2)
+);
+
+-- Create the course table
+CREATE TABLE course (
+    course_id INT PRIMARY KEY,
+    title VARCHAR(255),
+    dept_name VARCHAR(255),
+    credits INT
+);
+
+-- Insert data into the student table
+INSERT INTO student (S_ID, name, dept_name, tot_cred) VALUES
+    (1, 'John Doe', 'Computer Science', 120),
+    (2, 'Jane Doe', 'Computer Science', 100),
+    (3, 'Alice Smith', 'Mathematics', 80),
+    (4, 'Bob Johnson', 'Physics', 110),
+    (5, 'Emily Brown', 'Computer Science', 130);
+
+-- Insert data into the instructor table
+INSERT INTO instructor (T_ID, name, dept_name, salary) VALUES
+    (101, 'Amol Patel', 'Computer Science', 50000),
+    (102, 'Amit Sharma', 'Computer Science', 45000),
+    (103, 'Sarah Jones', 'Mathematics', 40000),
+    (104, 'David Wilson', 'Physics', 55000),
+    (105, 'Mary Miller', 'Computer Science', 60000);
+
+-- Insert data into the course table
+INSERT INTO course (course_id, title, dept_name, credits) VALUES
+    (1, 'Introduction to Programming', 'Computer Science', 3),
+    (2, 'Data Structures and Algorithms', 'Computer Science', 4),
+    (3, 'Calculus I', 'Mathematics', 4),
+    (4, 'Mechanics', 'Physics', 3),
+    (5, 'Database Management Systems', 'Computer Science', 3);
+
+
+-- i. Find the average salary of instructor in those departments where the average salary is more than Rs. 42000/-.
+SELECT dept_name, AVG(salary) AS avg_salary
+FROM instructor
+GROUP BY dept_name
+HAVING AVG(salary) > 42000;
+
+SET SQL_SAFE_UPDATES = 0;
+
+-- ii. Increase the salary of each instructor in the computer department by 10%.
+UPDATE instructor
+SET salary = salary * 1.10
+WHERE dept_name = 'Computer Science';
+select * from instructor;
+
+-- iii. Find the names of instructors whose names are neither ‘Amol’ nor ‘Amit’.
+SELECT name
+FROM instructor
+WHERE name NOT IN ('Amol Patel', 'Amit Sharma');
+
+-- iv. Find the names of student which contains ‘am’ as its substring.
+SELECT name
+FROM student
+WHERE name LIKE '%am%';
+
+
+-- v. Find the name of students from computer department that “DBMS” courses they take.
+SELECT s.name
+FROM student s
+JOIN course sc ON s.S_ID = sc.course_id
+WHERE s.dept_name = 'Computer Science' AND sc.title = 'Database Management Systems';

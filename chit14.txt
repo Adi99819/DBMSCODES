@@ -1,0 +1,45 @@
+// Create collections
+db.createCollection('Teachers')
+db.createCollection('Department')
+db.createCollection('Students')
+
+// Insert sample documents
+db.Teachers.insertMany([
+  { Tname: "Teacher1", dno: 1, Experience: 5, Salary: 15000, Data_of_Joining: ISODate("2018-01-01T00:00:00.000Z") },
+  { Tname: "Teacher2", dno: 2, Experience: 3, Salary: 12000, Data_of_Joining: ISODate("2019-01-01T00:00:00.000Z") },
+  { Tname: "Teacher3", dno: 2, Experience: 7, Salary: 18000, Data_of_Joining: ISODate("2017-01-01T00:00:00.000Z") },
+  { Tname: "Teacher4", dno: 1, Experience: 2, Salary: 10000, Data_of_Joining: ISODate("2020-01-01T00:00:00.000Z") }
+])
+
+db.Department.insertMany([
+  { Dno: 1, Dname: "Department1" },
+  { Dno: 2, Dname: "Department2" }
+])
+
+db.Students.insertMany([
+  { Sname: "Student1", Roll_No: 1, Class: "SE" },
+  { Sname: "xyz", Roll_No: 2, Class: "TE" },
+  { Sname: "Student3", Roll_No: 3, Class: "BE" },
+  { Sname: "Student4", Roll_No: 4, Class: "FE" },
+  { Sname: "Student5", Roll_No: 5, Class: "SE" },
+  { Sname: "Student6", Roll_No: 6, Class: "FE" }
+])
+
+
+2. Find the information about all teachers of Dno=2 and having salary greater than or equal to 10,000/-
+db.Teachers.find({ dno: 2, Salary: { $gte: 10000 } })
+
+
+
+db.Students.find({ $or: [ { Roll_No: 2 }, { Sname: "xyz" } ] })
+
+
+
+db.Students.updateOne({ Roll_No: 5 }, { $set: { Sname: "New Student" } })
+
+
+db.Students.deleteMany({ Class: "FE" })
+
+
+db.Students.createIndex({ Roll_No: 1 })
+

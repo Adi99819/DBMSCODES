@@ -1,0 +1,71 @@
+CREATE DATABASE abc;
+USE abc;
+CREATE TABLE teaches (
+    T_ID INT,
+    course_id VARCHAR(10),
+    sec_id VARCHAR(10),
+    semester VARCHAR(10),
+    year INT,
+    PRIMARY KEY (T_ID, course_id, sec_id, semester, year)
+);
+CREATE TABLE student (
+    S_ID INT PRIMARY KEY,
+    name VARCHAR(50),
+    dept_name VARCHAR(50),
+    tot_cred INT
+);
+CREATE TABLE instructor (
+    T_ID INT PRIMARY KEY,
+    name VARCHAR(50),
+    dept_name VARCHAR(50),
+    salary DECIMAL(10, 2)
+);
+CREATE TABLE course (
+    course_id VARCHAR(10) PRIMARY KEY,
+    title VARCHAR(100),
+    dept_name VARCHAR(50),
+    credits INT
+);
+INSERT INTO teaches (T_ID, course_id, sec_id, semester, year) VALUES
+(1, 'CS101', 'A', 'Fall', 2023),
+(1, 'CS102', 'B', 'Spring', 2024),
+(2, 'MATH101', 'A', 'Fall', 2023),
+(3, 'BIO101', 'C', 'Spring', 2024);
+
+INSERT INTO student (S_ID, name, dept_name, tot_cred) VALUES
+(1, 'Alice Johnson', 'Computer Science', 60),
+(2, 'Bob Smith', 'Mathematics', 45),
+(3, 'Cathy Lee', 'Biology', 30),
+(4, 'David Brown', NULL, 90), -- Example with NULL dept_name
+(5, 'Eva White', 'Computer Science', 75);
+
+INSERT INTO instructor (T_ID, name, dept_name, salary) VALUES
+(1, 'Dr. Smith', 'Computer Science', 80000),
+(2, 'Dr. Johnson', 'Mathematics', 85000),
+(3, 'Dr. Lee', 'Biology', 90000);
+
+INSERT INTO course (course_id, title, dept_name, credits) VALUES
+('CS101', 'Introduction to Computer Science', 'Computer Science', 4),
+('CS102', 'Data Structures', 'Computer Science', 4),
+('MATH101', 'Calculus I', 'Mathematics', 3),
+('BIO101', 'General Biology', 'Biology', 4);
+
+SELECT instructor.name, teaches.course_id, teaches.semester, teaches.year
+FROM instructor
+JOIN teaches ON instructor.T_ID = teaches.T_ID
+ORDER BY teaches.semester, teaches.year;
+
+CREATE VIEW student_details AS
+SELECT S_ID, name, dept_name, tot_cred
+FROM student;
+
+SELECT * FROM student_details;
+ALTER TABLE student
+CHANGE dept_name department_name VARCHAR(50);
+
+SET SQL_SAFE_UPDATES = 0;
+
+DELETE FROM student
+WHERE department_name IS NULL;
+
+

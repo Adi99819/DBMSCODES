@@ -1,0 +1,76 @@
+create database pqr;
+use pqr;
+CREATE TABLE N_RollCall (
+  Roll INT,
+  Name VARCHAR(255)
+);
+
+CREATE TABLE O_RollCall (
+  Roll INT,
+  Name VARCHAR(255)
+);
+INSERT INTO N_RollCall (Roll, Name)
+VALUES
+  (1, 'John'),
+  (2, 'Mary'),
+  (3, 'David'),
+  (4, 'Emily');
+
+INSERT INTO O_RollCall (Roll, Name)
+VALUES
+  (1, 'John'),
+  (2, 'Mary'),
+  (5, 'Michael'),
+  (6, 'Sarah');
+ 
+DELIMITER //
+
+CREATE PROCEDURE merge2()
+BEGIN
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE a INT;
+  DECLARE a1 VARCHAR(255);
+  DECLARE b INT;
+
+  DECLARE c1 CURSOR FOR SELECT Roll, Name FROM N_RollCall;
+  DECLARE c2 CURSOR FOR SELECT Roll FROM O_RollCall;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+  OPEN c1;
+
+  loop1: LOOP
+    FETCH c1 INTO a, a1;
+    
+    IF done THEN
+      LEAVE loop1; -- Exit if no more rows to fetch
+    END IF;
+
+    -- Check if the current Roll exists in O_RollCall
+    SET done = FALSE; -- Reset done for the inner loop
+    OPEN c2;
+
+    loop2: LOOP
+      FETCH c2 INTO b;
+      
+      IF done THEN
+        -- If we reach the end of O_RollCall, insert the new record
+        INSERT INTO O_RollCall (Roll, Name) VALUES (a, a1);
+        LEAVE loop2; -- Exit inner loop after insertion
+      END IF;
+
+      IF a = b THEN
+        -- If Roll exists in O_RollCall, skip insertion
+        LEAVE loop2; -- Exit inner loop
+      END IF;
+    END LOOP;
+
+    CLOSE c2; -- Close the second cursor after the inner loop
+  END LOOP;
+
+  CLOSE c1; -- Close the first cursor after the outer loop
+END //
+
+DELIMITER ;
+CALL merge2();
+
+SELECT * FROM O_RollCall;

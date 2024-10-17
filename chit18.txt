@@ -1,0 +1,46 @@
+use mydb
+
+db.createCollection("city")
+
+db.city.insertOne({
+  city: "pune",
+  type: "urban",
+  state: "MH",
+  population: 5600000
+})
+
+Statewise Population using MapReduce
+mapState = function() {
+  emit(this.state, this.population);
+}
+
+reduceState = function(key, values) {
+  return Array.sum(values);
+}
+
+db.city.mapReduce(mapState, reduceState, { out: "statewise_population" })
+
+Citywise Population using MapReduce
+
+mapCity = function() {
+  emit(this.city, this.population);
+}
+
+reduceCity = function(key, values) {
+  return Array.sum(values);
+}
+
+db.city.mapReduce(mapCity, reduceCity, { out: "citywise_population" })
+
+
+Typewise Population using MapReduce
+
+mapType = function() {
+  emit(this.type, this.population);
+}
+
+reduceType = function(key, values) {
+  return Array.sum(values);
+}
+
+db.city.mapReduce(mapType, reduceType, { out: "typewise_population" })

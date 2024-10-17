@@ -1,0 +1,64 @@
+show databases;
+use om;
+CREATE TABLE Borrower (
+    Roll_no INT PRIMARY KEY,
+    Name VARCHAR(50),
+    DateofIssue DATE,
+    NameofBook VARCHAR(100),
+    Status CHAR(1) CHECK (Status IN ('I', 'R'))
+);
+
+CREATE TABLE Fine (
+    Roll_no INT,
+    Date_Fine DATE,
+    Amt INT,
+    CONSTRAINT fk_Roll_no FOREIGN KEY (Roll_no) REFERENCES Borrower(Roll_no)
+);
+
+INSERT INTO Borrower (Roll_no, Name, DateofIssue, NameofBook, Status)
+VALUES (1, 'Student 1', '2022-01-01', 'Book 1', 'I');
+
+INSERT INTO Borrower (Roll_no, Name, DateofIssue, NameofBook, Status)
+VALUES (2, 'Student 2', '2022-02-01', 'Book 2', 'I');
+
+INSERT INTO Borrower (Roll_no, Name, DateofIssue, NameofBook, Status)
+VALUES (3, 'Student 3', '2022-03-01', 'Book 3', 'I');
+
+INSERT INTO Borrower (Roll_no, Name, DateofIssue, NameofBook, Status)
+VALUES (4, 'Student 4', '2024-10-10', 'Book 4', 'I');
+
+
+DELIMITER //
+CREATE PROCEDURE submit_book(IN p_Roll_no INT, IN p_NameofBook VARCHAR(100))
+BEGIN
+    DECLARE l_days INT;
+    DECLARE l_fine_amount DECIMAL(10, 2);
+    DECLARE l_status CHAR(1);
+
+    SELECT DATEDIFF(CURDATE(), DateofIssue) INTO l_days
+    FROM Borrower
+    WHERE Roll_no = p_Roll_no AND NameofBook = p_NameofBook;
+
+    IF l_days BETWEEN 15 AND 30 THEN
+        SET l_fine_amount = l_days * 5;
+    ELSEIF l_days > 30 THEN
+        SET l_fine_amount = (l_days - 30) * 50 + 15 * 5;
+    ELSE
+        SET l_fine_amount = 0;
+    END IF;
+
+    UPDATE Borrower
+    SET Status = 'R'
+    WHERE Roll_no = p_Roll_no AND NameofBook = p_NameofBook;
+
+    IF l_fine_amount > 0 THEN
+        INSERT INTO Fine (Roll_no, Date_Fine, Amt)
+        VALUES (p_Roll_no, CURDATE(), l_fine_amount);
+    END IF;
+END//
+DELIMITER ;
+
+
+CALL submit_book(4, 'Book 4');
+CALL submit_book(1, 'Book 1');
+SELECT * FROM Fine;

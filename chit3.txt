@@ -1,0 +1,61 @@
+CREATE TABLE Stud (
+    Roll INT PRIMARY KEY,
+    Att INT,
+    Status VARCHAR(10)
+);
+INSERT INTO Stud (Roll, Att, Status)
+VALUES (1, 80, NULL);
+
+INSERT INTO Stud (Roll, Att, Status)
+VALUES (2, 60, NULL);
+
+INSERT INTO Stud (Roll, Att, Status)
+VALUES (3, 90, NULL);
+
+select * from Stud;
+
+DELIMITER //
+
+CREATE PROCEDURE check_attendance(IN roll_no INT)
+BEGIN
+    DECLARE v_att INT;
+    DECLARE v_status VARCHAR(10);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    DECLARE EXIT HANDLER FOR NOT FOUND
+    BEGIN
+        SELECT 'No data found for the given roll number' AS message;
+    END;
+
+    START TRANSACTION;
+
+    SELECT Att, Status INTO v_att, v_status
+    FROM Stud
+    WHERE Roll = roll_no;
+
+    IF v_att < 75 THEN
+        SELECT 'Term not granted' AS message;
+        UPDATE Stud
+        SET Status = 'D'
+        WHERE Roll = roll_no;
+    ELSE
+        SELECT 'Term granted' AS message;
+        UPDATE Stud
+        SET Status = 'ND'
+        WHERE Roll = roll_no;
+    END IF;
+
+    COMMIT;
+END //
+
+
+
+DELIMITER ;
+
+
+CALL check_attendance(1);

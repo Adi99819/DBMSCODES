@@ -1,0 +1,80 @@
+// 1. Create Collection
+
+//indexing 
+db.createCollection("employees");
+
+// 2. Insert some Documents
+db.employees.insertMany([
+  { Eno: 101, Ename: "Amit", Address: "Pune", Salary: 35000, Post: "Manager" },
+  { Eno: 102, Ename: "Sneha", Address: "Nashik", Salary: 25000, Post: "Analyst" },
+  { Eno: 103, Ename: "Ravi", Address: "Mumbai", Salary: 28000, Post: "Developer" }
+]);
+
+// 3. Create Single Index
+db.employees.createIndex({ Ename: 1 });
+
+// 4. Create Compound Index
+db.employees.createIndex({ Address: 1, Salary: -1 });
+
+// 5. Create Unique Index on Collection
+db.employees.createIndex({ Eno: 1 }, { unique: true });
+
+// 6. Show Index Information
+db.employees.getIndexes();
+
+// 7. Remove Index
+db.employees.dropIndex("Ename_1");
+
+
+
+
+//Agregation 
+
+// 1. Create Collection and Insert Data
+db.students.insertMany([
+  { Rollno: 1, name: 'Navin', subject: 'DMSA', marks: 78 },
+  { Rollno: 2, name: 'Anusha', subject: 'OSD', marks: 75 },
+  { Rollno: 3, name: 'Ravi', subject: 'TOC', marks: 69 },
+  { Rollno: 4, name: 'Veena', subject: 'TOC', marks: 70 },
+  { Rollno: 5, name: 'Pravini', subject: 'OSD', marks: 80 },
+  { Rollno: 6, name: 'Reena', subject: 'DMSA', marks: 50 },
+  { Rollno: 7, name: 'Geeta', subject: 'CN', marks: 90 },
+  { Rollno: 8, name: 'Akash', subject: 'CN', marks: 85 }
+]);
+
+// 2. Find Max Marks of Each Subject
+db.students.aggregate([
+  { $group: { _id: "$subject", maxMarks: { $max: "$marks" } } }
+]);
+
+// 3. Find Min Marks of Each Subject
+db.students.aggregate([
+  { $group: { _id: "$subject", minMarks: { $min: "$marks" } } }
+]);
+
+// 4. Find Sum of Marks of Each Subject
+db.students.aggregate([
+  { $group: { _id: "$subject", totalMarks: { $sum: "$marks" } } }
+]);
+
+// 5. Find Average Marks of Each Subject
+db.students.aggregate([
+  { $group: { _id: "$subject", avgMarks: { $avg: "$marks" } } }
+]);
+
+// 6. Find First Record of Each Subject
+db.students.aggregate([
+  { $sort: { subject: 1, Rollno: 1 } },
+  { $group: { _id: "$subject", firstRecord: { $first: "$$ROOT" } } }
+]);
+
+// 7. Find Last Record of Each Subject
+db.students.aggregate([
+  { $sort: { subject: 1, Rollno: 1 } },
+  { $group: { _id: "$subject", lastRecord: { $last: "$$ROOT" } } }
+]);
+
+// 8. Find Count of Records for Each Subject
+db.students.aggregate([
+  { $group: { _id: "$subject", recordCount: { $sum: 1 } } }
+]);

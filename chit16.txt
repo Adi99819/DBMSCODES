@@ -1,0 +1,49 @@
+// Create database
+use department
+
+// Create collection
+db.createCollection('teacher')
+
+// Insert sample documents
+db.teacher.insertMany([
+  { name: "Teacher1", department: "Math", experience: 5, salary: 50000 },
+  { name: "Teacher2", department: "Science", experience: 3, salary: 40000 },
+  { name: "Teacher3", department: "Math", experience: 7, salary: 60000 },
+  { name: "Teacher4", department: "Science", experience: 2, salary: 30000 }
+])
+
+// Display the department wise average salary
+db.teacher.aggregate([
+  {
+    $group: {
+      _id: "$department",
+      averageSalary: { $avg: "$salary" }
+    }
+  }
+]).pretty()
+
+// Display the no. Of employees working in each department
+db.teacher.aggregate([
+  {
+    $group: {
+      _id: "$department",
+      numberOfEmployees: { $sum: 1 }
+    }
+  }
+]).pretty()
+
+// Display the department wise minimum salary
+db.teacher.aggregate([
+  {
+    $group: {
+      _id: "$department",
+      minimumSalary: { $min: "$salary" }
+    }
+  }
+]).pretty()
+
+// Apply index
+db.teacher.createIndex({ department: 1 })
+
+// Drop index
+db.teacher.dropIndex({ department: 1 })

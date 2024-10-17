@@ -1,0 +1,39 @@
+-- 1. Create the emp table with constraints
+CREATE TABLE emp (
+    Eno INT PRIMARY KEY AUTO_INCREMENT, -- Primary key with auto-increment
+    Ename VARCHAR(50) NOT NULL,         -- Not null constraint on Ename
+    Address VARCHAR(50) DEFAULT 'Nashik',-- Default value for Address is 'Nashik'
+    Joindate DATE                       -- Joindate field
+);
+
+-- 2. Set the auto_increment value to start at 101
+ALTER TABLE emp AUTO_INCREMENT = 101;
+
+-- 3. Add 'Post' field to the emp table
+ALTER TABLE emp ADD Post VARCHAR(50);
+
+-- 4. Insert data into emp table
+INSERT INTO emp (Ename, Address, Joindate, Post) VALUES 
+('Amit', 'Pune', '2022-01-15', 'Manager'),
+('Sneha', 'Nashik', '2023-02-20', 'Analyst'),
+('Ravi', 'Mumbai', '2021-12-10', 'Developer');
+
+-- 5. Add 'Salary' field to the emp table
+ALTER TABLE emp ADD Salary DECIMAL(10, 2);
+SET SQL_SAFE_UPDATES = 0;
+
+-- 6. Insert Salary data for the existing employees (Optional, adjust as needed)
+UPDATE emp SET Salary = 35000 WHERE Ename = 'Amit';
+UPDATE emp SET Salary = 25000 WHERE Ename = 'Sneha';
+UPDATE emp SET Salary = 28000 WHERE Ename = 'Ravi';
+
+-- 7. Create Index on Ename field
+CREATE INDEX idx_ename ON emp (Ename);
+
+-- 8. Create View on emp table to show only Ename and Salary
+CREATE VIEW emp_view AS
+SELECT Ename, Salary FROM emp;
+
+-- 9. To view the contents of the view, use:
+SELECT * FROM emp_view;
+

@@ -1,0 +1,57 @@
+CREATE DATABASE student;
+USE student;
+-- Table for storing student marks
+-- Table for storing student result
+CREATE TABLE Stud_Marks (
+    name VARCHAR(50),
+    total_marks INT
+);
+CREATE TABLE Result (
+    roll INT AUTO_INCREMENT PRIMARY KEY,  -- Auto-incrementing roll number
+    name VARCHAR(50),
+    class VARCHAR(20)
+);
+
+INSERT INTO Stud_Marks (name, total_marks)
+VALUES 
+('John Doe', 1400),
+('Jane Smith', 950),
+('Tom Harris', 860),
+('Alice Johnson', 700),
+('Bob Williams', 999);
+
+DELIMITER $$
+
+CREATE PROCEDURE proc_Grade (
+    IN student_name VARCHAR(50),
+    IN total_marks INT
+)
+BEGIN
+    DECLARE student_class VARCHAR(20);
+    
+    -- Categorization logic
+    IF total_marks >= 990 AND total_marks <= 1500 THEN
+        SET student_class = 'Distinction';
+    ELSEIF total_marks >= 900 AND total_marks < 990 THEN
+        SET student_class = 'First Class';
+    ELSEIF total_marks >= 825 AND total_marks < 900 THEN
+        SET student_class = 'Higher Second Class';
+    ELSE
+        SET student_class = 'No Category';  -- For marks less than 825
+    END IF;
+    
+    -- Insert the result into the Result table
+    INSERT INTO Result (name, class)
+    VALUES (student_name, student_class);
+    
+    COMMIT;
+END$$
+
+DELIMITER ;
+
+CALL proc_Grade('John Doe', 1400);  -- Example student with marks 1400
+CALL proc_Grade('Jane Smith', 950); -- Example student with marks 950
+CALL proc_Grade('Tom Harris', 860); -- Example student with marks 860
+
+SELECT * FROM Result;
+SELECT * FROM Stud_Marks;

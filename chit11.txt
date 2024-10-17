@@ -1,0 +1,67 @@
+CREATE DATABASE xyz;
+use xyz;
+CREATE TABLE Library (
+  BookID INT PRIMARY KEY,
+  BookTitle VARCHAR(255),
+  Author VARCHAR(255),
+  PublicationYear INT
+);
+CREATE TABLE Library_Audit (
+  AuditID INT PRIMARY KEY,
+  BookID INT,
+  BookTitle VARCHAR(255),
+  Author VARCHAR(255),
+  PublicationYear INT,
+  Action VARCHAR(10),
+  Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO Library (BookID, BookTitle, Author, PublicationYear)
+VALUES
+  (1, 'To Kill a Mockingbird', 'Harper Lee', 1960),
+  (2, 'The Great Gatsby', 'F. Scott Fitzgerald', 1925),
+  (3, '1984', 'George Orwell', 1949);
+  
+DELIMITER //
+
+CREATE TRIGGER trg_Library_Audit
+BEFORE UPDATE ON Library
+FOR EACH ROW
+BEGIN
+  INSERT INTO Library_Audit (BookID, BookTitle, Author, PublicationYear, Action)
+  VALUES (OLD.BookID, OLD.BookTitle, OLD.Author, OLD.PublicationYear, 'UPDATE');
+END;
+
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER trg_Library_Audit_Delete
+BEFORE DELETE ON Library
+FOR EACH ROW
+BEGIN
+  INSERT INTO Library_Audit (BookID, BookTitle, Author, PublicationYear, Action)
+  VALUES (OLD.BookID, OLD.BookTitle, OLD.Author, OLD.PublicationYear, 'DELETE');
+END;
+
+//
+
+DELIMITER ;
+
+ALTER TABLE Library_Audit
+CHANGE AuditID AuditID INT AUTO_INCREMENT;
+
+
+
+UPDATE Library
+SET BookTitle = 'To Kill a Mockingbird (Updated)'
+WHERE BookID = 1;
+
+SELECT * FROM Library_Audit;
+
+DELETE FROM Library
+WHERE BookID = 2;
+
+SELECT * FROM Library_Audit;

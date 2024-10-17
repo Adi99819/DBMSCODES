@@ -1,0 +1,55 @@
+// 1. Use the Institute database
+use Institute
+
+// 2. Create the Students collection
+db.createCollection("Students")
+
+// 3. Insert 10 documents
+db.Students.insertMany([
+  { RollNo: 1, Name: "Ajay", Age: 16, Branch: "Electrical", Address: { City: "Mumbai", State: "Maharashtra" }, Hobbies: ["Reading", "Cricket"] },
+  { RollNo: 2, Name: "Priya", Age: 17, Branch: "Mechanical", Address: { City: "Pune", State: "Maharashtra" }, Hobbies: ["Singing", "Dancing"] },
+  { RollNo: 3, Name: "Sohan", Age: 18, Branch: "Civil", Address: { City: "Nagpur", State: "Maharashtra" }, Hobbies: ["Sketching", "Swimming"] },
+  { RollNo: 4, Name: "Aarti", Age: 15, Branch: "Computer", Address: { City: "Pune", State: "Maharashtra" }, Hobbies: ["Painting", "Gaming"] },
+  { RollNo: 5, Name: "Vijay", Age: 19, Branch: "IT", Address: { City: "Nashik", State: "Maharashtra" }, Hobbies: ["Football", "Music"] },
+  { RollNo: 6, Name: "Kiran", Age: 16, Branch: "Electronics", Address: { City: "Thane", State: "Maharashtra" }, Hobbies: ["Cycling", "Photography"] },
+  { RollNo: 7, Name: "Aman", Age: 20, Branch: "Electrical", Address: { City: "Kolhapur", State: "Maharashtra" }, Hobbies: ["Reading", "Chess"] },
+  { RollNo: 8, Name: "Riya", Age: 21, Branch: "Mechanical", Address: { City: "Solapur", State: "Maharashtra" }, Hobbies: ["Cooking", "Dancing"] },
+  { RollNo: 9, Name: "Ashok", Age: 17, Branch: "Computer", Address: { City: "Pune", State: "Maharashtra" }, Hobbies: ["Programming", "Music"] },
+  { RollNo: 10, Name: "Meera", Age: 15, Branch: "Civil", Address: { City: "Aurangabad", State: "Maharashtra" }, Hobbies: ["Traveling", "Badminton"] }
+])
+
+// 4. Display all students’ information
+db.Students.find().pretty()
+
+// 5. Display student information whose age is greater than 15
+db.Students.find({ Age: { $gt: 15 } }).pretty()
+
+// 6. Display student information sorted on the name field
+db.Students.find().sort({ Name: 1 }).pretty()
+
+// 7. Update student branch to Computer for RollNo 3
+db.Students.updateOne({ RollNo: 3 }, { $set: { Branch: "Computer" } })
+
+// 8. Remove the document with RollNo 1
+db.Students.deleteOne({ RollNo: 1 })
+
+// 9. Display student information whose name starts with A
+db.Students.find({ Name: { $regex: '^A' } }).pretty()
+
+// 10. Display the total number of documents available in the collection
+db.Students.countDocuments()
+
+// 11. Display only the first 5 documents
+db.Students.find().limit(5).pretty()
+
+// 12. Display all documents except the first 3
+db.Students.find().skip(3).pretty()
+
+// 13. Display the names of students who live in Pune city
+db.Students.find({ "Address.City": "Pune" }, { Name: 1, _id: 0 }).pretty()
+
+// 14. Display only the name of all students
+db.Students.find({}, { Name: 1, _id: 0 }).pretty()
+
+// 15. Drop the Students collection
+db.Students.drop()
