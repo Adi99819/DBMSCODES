@@ -1,0 +1,32 @@
+{
+  name: "Movie1",
+  type: "action",
+  budget: 1000000,
+  producer: {
+    name: "producer1",
+    address: "PUNE"
+  }
+}
+
+
+Find movies with a budget > 100,000:
+
+db.movies.find({ budget: { $gt: 100000 } }, { name: 1, _id: 0 });
+
+Find the producer who lives in Pune:
+
+db.movies.find({ "producer.address": "PUNE" }, { "producer.name": 1, _id: 0 });
+
+Update the movie type from "action" to "horror":
+
+db.movies.updateMany({ type: "action" }, { $set: { type: "horror" } });
+
+Find all movies produced by "producer1" with their address:
+
+db.movies.find({ "producer.name": "producer1" }, { "name": 1, "producer.address": 1, _id: 0 });
+
+Find the average budget of all movies using an aggregation function:
+
+db.movies.aggregate([
+  { $group: { _id: null, avgBudget: { $avg: "$budget" } } }
+]);

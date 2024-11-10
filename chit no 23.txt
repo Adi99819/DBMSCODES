@@ -1,0 +1,139 @@
+Assign 23
+
+CREATE TABLE ACTOR (
+    Act_id INT PRIMARY KEY,            -- Unique identifier for each actor
+    Act_Name VARCHAR(100) NOT NULL,     -- Actor's name, cannot be NULL
+    Act_Gender CHAR(1) CHECK (Act_Gender IN ('M', 'F'))  -- Gender of the actor (M = Male, F = Female)
+);
+
+CREATE TABLE DIRECTOR (
+    Dir_id INT PRIMARY KEY,             -- Unique identifier for each director
+    Dir_Name VARCHAR(100) NOT NULL,      -- Director's name, cannot be NULL
+    Dir_Phone VARCHAR(15)               -- Director's phone number, can be NULL
+);
+
+CREATE TABLE MOVIES (
+    Mov_id INT PRIMARY KEY,              -- Unique identifier for each movie
+    Mov_Title VARCHAR(255) NOT NULL,      -- Title of the movie, cannot be NULL
+    Mov_Year INT CHECK (Mov_Year >= 1900 AND Mov_Year <= YEAR(CURRENT_DATE)), -- Year of the movie
+    Mov_Lang VARCHAR(50),                 -- Language of the movie
+    Dir_id INT,                           -- Director ID (foreign key)
+    FOREIGN KEY (Dir_id) REFERENCES DIRECTOR(Dir_id)  -- Foreign key referencing the DIRECTOR table
+);
+
+CREATE TABLE MOVIE_CAST (
+    Act_id INT,                           -- Actor ID (foreign key)
+    Mov_id INT,                           -- Movie ID (foreign key)
+    Role VARCHAR(100),                    -- Actor's role in the movie
+    PRIMARY KEY (Act_id, Mov_id),         -- Composite primary key
+    FOREIGN KEY (Act_id) REFERENCES ACTOR(Act_id),  -- Foreign key referencing the ACTOR table
+    FOREIGN KEY (Mov_id) REFERENCES MOVIES(Mov_id)  -- Foreign key referencing the MOVIES table
+);
+
+CREATE TABLE RATING (
+    Mov_id INT,                           -- Movie ID (foreign key)
+    Rev_Stars DECIMAL(2, 1) CHECK (Rev_Stars BETWEEN 0 AND 5),  -- Rating stars (0 to 5 scale)
+    PRIMARY KEY (Mov_id),                 -- Primary key on the movie ID
+    FOREIGN KEY (Mov_id) REFERENCES MOVIES(Mov_id)  -- Foreign key referencing the MOVIES table
+);
+
+
+INSERT INTO ACTOR (Act_id, Act_Name, Act_Gender)
+VALUES 
+(1, 'Robert Downey Jr.', 'M'),
+(2, 'Scarlett Johansson', 'F'),
+(3, 'Morgan Freeman', 'M'),
+(4, 'Helen Mirren', 'F'),
+(5, 'Matt Damon', 'M'),
+(6, 'Cate Blanchett', 'F');
+
+
+INSERT INTO DIRECTOR (Dir_id, Dir_Name, Dir_Phone)
+VALUES
+(1, 'Steven Spielberg', '555-1234'),
+(2, 'Christopher Nolan', '555-5678'),
+(3, 'Alfred Hitchcock', '555-8765'),
+(4, 'Martin Scorsese', '555-1122');
+
+INSERT INTO MOVIES (Mov_id, Mov_Title, Mov_Year, Mov_Lang, Dir_id)
+VALUES
+(1, 'Jurassic Park', 1993, 'English', 1),
+(2, 'Inception', 2010, 'English', 2),
+(3, 'Psycho', 1960, 'English', 3),
+(4, 'Shutter Island', 2010, 'English', 2),
+(5, 'Taxi Driver', 1976, 'English', 4),
+(6, 'The Aviator', 2004, 'English', 4);
+
+INSERT INTO MOVIE_CAST (Act_id, Mov_id, Role)
+VALUES
+(1, 1, 'Dr. Alan Grant'),
+(2, 1, 'Dr. Ellie Sattler'),
+(1, 2, 'Tony Stark'),
+(2, 2, 'Natasha Romanoff'),
+(3, 3, 'Norman Bates'),
+(4, 3, 'Marion Crane'),
+(5, 4, 'Teddy Daniels'),
+(6, 4, 'Dolly'),
+(1, 5, 'Travis Bickle'),
+(2, 5, 'Iris'),
+(4, 6, 'Howard Hughes'),
+(6, 6, 'Ava Gardner');
+
+INSERT INTO RATING (Mov_id, Rev_Stars)
+VALUES
+(1, 4.5),
+(2, 4.7),
+(3, 4.8),
+(4, 4.3),
+(5, 4.0),
+(6, 4.2);
+
+
+. List the titles of all movies directed by ‘Hitchcock’.
+
+SELECT M.Mov_Title
+FROM MOVIES M
+JOIN DIRECTOR D ON M.Dir_id = D.Dir_id
+WHERE D.Dir_Name = 'Hitchcock';
+
+
+2. Find the movie names where one or more actors acted in two or more movies.
+
+SELECT M.Mov_Title
+FROM MOVIES M
+JOIN MOVIE_CAST MC ON M.Mov_id = MC.Mov_id
+WHERE MC.Act_id IN (
+    SELECT Act_id
+    FROM MOVIE_CAST
+    GROUP BY Act_id
+    HAVING COUNT(DISTINCT Mov_id) >= 2
+);
+
+
+ List all actors who acted in a movie before 2000 and also in a movie after 2015 (use JOIN operation).
+
+SELECT DISTINCT A.Act_Name
+FROM ACTOR A
+JOIN MOVIE_CAST MC1 ON A.Act_id = MC1.Act_id
+JOIN MOVIES M1 ON MC1.Mov_id = M1.Mov_id
+JOIN MOVIE_CAST MC2 ON A.Act_id = MC2.Act_id
+JOIN MOVIES M2 ON MC2.Mov_id = M2.Mov_id
+WHERE M1.Mov_Year < 2000 AND M2.Mov_Year > 2015;
+
+4. Find the title of movies and number of stars for each movie that has at least one rating. Sort the result by movie title.
+
+SELECT M.Mov_Title, R.Rev_Stars
+FROM MOVIES M
+JOIN RATING R ON M.Mov_id = R.Mov_id
+ORDER BY M.Mov_Title;
+
+5. Update rating of all movies directed by ‘Steven Spielberg’ to 5.
+
+UPDATE RATING R
+SET R.Rev_Stars = 5
+WHERE R.Mov_id IN (
+    SELECT M.Mov_id
+    FROM MOVIES M
+    JOIN DIRECTOR D ON M.Dir_id = D.Dir_id
+    WHERE D.Dir_Name = 'Steven Spielberg'
+);

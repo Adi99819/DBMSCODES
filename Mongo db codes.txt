@@ -1,0 +1,510 @@
+Assign 9
+
+db.orderinfo.insertMany([
+    {
+        cust_id: 123,
+        cust_name: "abc",
+        status: "A",
+        price: 250
+    },
+    {
+        cust_id: 124,
+        cust_name: "def",
+        status: "B",
+        price: 500
+    },
+    {
+        cust_id: 125,
+        cust_name: "ghi",
+        status: "A",
+        price: 300
+    },
+    {
+        cust_id: 126,
+        cust_name: "jkl",
+        status: "C",
+        price: 150
+    }
+]);
+
+
+1)
+db.orderinfo.aggregate([
+    { $match: { status: 'A' } },
+    { $group: { _id: "$cust_id", average_price: { $avg: "$price" } } }
+]);
+
+2)
+db.orderinfo.find(
+    { price: { $gte: 100, $lte: 1000 } },
+    { status: 1, _id: 0 }
+);
+
+3)
+db.orderinfo.find(
+    {},
+    { _id: 0 }
+);
+
+4)
+db.orderinfo.createIndex({ cust_id: 1 });
+
+-----------------------------------------------------------------------------------------
+
+
+Assign 13
+db.movies.insertMany([
+    {
+        name: "Movie1",
+        type: "action",
+        budget: 1000000,
+        producer: {
+            name: "producer1",
+            address: "PUNE"
+        }
+    },
+    {
+        name: "Movie2",
+        type: "comedy",
+        budget: 500000,
+        producer: {
+            name: "producer2",
+            address: "MUMBAI"
+        }
+    },
+    {
+        name: "Movie3",
+        type: "action",
+        budget: 200000,
+        producer: {
+            name: "producer1",
+            address: "PUNE"
+        }
+    }
+]);
+
+
+1)
+db.movies.find(
+    { budget: { $gt: 100000 } },
+    { name: 1, _id: 0 }
+);
+
+2)
+db.movies.find(
+    { "producer.address": "PUNE" },
+    { "producer.name": 1, _id: 0 }
+);
+
+3)
+
+db.movies.updateMany(
+    { type: "action" },
+    { $set: { type: "horror" } }
+);
+
+4)
+
+db.movies.find(
+    { "producer.name": "producer1" },
+    { name: 1, "producer.address": 1, _id: 0 }
+);
+
+--------------------------------------------------------------------------------------
+
+Assign 14
+
+// Create Teachers collection and insert sample documents
+db.Teachers.insertMany([
+    {
+        Tname: "Alice",
+        dno: 1,
+        Experience: 5,
+        Salary: 12000,
+        Date_of_Joining: new Date("2018-01-15")
+    },
+    {
+        Tname: "Bob",
+        dno: 2,
+        Experience: 3,
+        Salary: 9000,
+        Date_of_Joining: new Date("2019-03-10")
+    },
+    {
+        Tname: "Charlie",
+        dno: 2,
+        Experience: 10,
+        Salary: 15000,
+        Date_of_Joining: new Date("2015-05-20")
+    }
+]);
+
+// Create Department collection and insert sample documents
+db.Department.insertMany([
+    {
+        Dno: 1,
+        Dname: "Computer Science"
+    },
+    {
+        Dno: 2,
+        Dname: "Mathematics"
+    }
+]);
+
+// Create Students collection and insert sample documents
+db.Students.insertMany([
+    {
+        Sname: "John",
+        Roll_No: 1,
+        Class: "FE"
+    },
+    {
+        Sname: "Jane",
+        Roll_No: 2,
+        Class: "SE"
+    },
+    {
+        Sname: "xyz",
+        Roll_No: 3,
+        Class: "TE"
+    },
+    {
+        Sname: "Doe",
+        Roll_No: 5,
+        Class: "FE"
+    }
+]);
+
+2)
+db.Teachers.find(
+    { dno: 2, Salary: { $gte: 10000 } }
+);
+
+3)
+db.Students.find(
+    { $or: [ { Roll_No: 2 }, { Sname: 'xyz' } ] }
+);
+
+4)
+db.Students.updateOne(
+    { Roll_No: 5 },
+    { $set: { Sname: "NewName" } }  // Replace "NewName" with the desired name
+);
+
+5)
+db.Students.deleteMany(
+    { Class: 'FE' }
+);
+
+db.Students.createIndex({ Roll_No: 1 });
+
+
+--------------------------------------------------------------------------------------
+
+Assign 15
+
+
+// Create database
+use Institute;
+
+// Create collection
+db.createCollection("Students");
+
+2)
+db.Students.insertMany([
+    {
+        RollNo: 1,
+        StudentName: "Alice",
+        Age: 16,
+        Branch: "Computer Science",
+        Address: { City: "Pune", State: "Maharashtra" },
+        Hobbies: ["Reading", "Sports"]
+    },
+    {
+        RollNo: 2,
+        StudentName: "Bob",
+        Age: 14,
+        Branch: "Electrical",
+        Address: { City: "Mumbai", State: "Maharashtra" },
+        Hobbies: ["Music", "Travel"]
+    },
+    {
+        RollNo: 3,
+        StudentName: "Charlie",
+        Age: 17,
+        Branch: "Computer Science",
+        Address: { City: "Pune", State: "Maharashtra" },
+        Hobbies: ["Gaming", "Coding"]
+    },
+    {
+        RollNo: 4,
+        StudentName: "David",
+        Age: 15,
+        Branch: "Mechanical",
+        Address: { City: "Nagpur", State: "Maharashtra" },
+        Hobbies: ["Sports"]
+    },
+    {
+        RollNo: 5,
+        StudentName: "Eva",
+        Age: 18,
+        Branch: "Civil",
+        Address: { City: "Nashik", State: "Maharashtra" },
+        Hobbies: ["Painting", "Travel"]
+    },
+    {
+        RollNo: 6,
+        StudentName: "Frank",
+        Age: 19,
+        Branch: "Computer Science",
+        Address: { City: "Pune", State: "Maharashtra" },
+        Hobbies: ["Music", "Reading"]
+    },
+    {
+        RollNo: 7,
+        StudentName: "Grace",
+        Age: 20,
+        Branch: "Biotechnology",
+        Address: { City: "Mumbai", State: "Maharashtra" },
+        Hobbies: ["Dancing", "Travel"]
+    },
+    {
+        RollNo: 8,
+        StudentName: "Hank",
+        Age: 16,
+        Branch: "Electrical",
+        Address: { City: "Pune", State: "Maharashtra" },
+        Hobbies: ["Sports"]
+    },
+    {
+        RollNo: 9,
+        StudentName: "Ivy",
+        Age: 15,
+        Branch: "Chemical",
+        Address: { City: "Nagpur", State: "Maharashtra" },
+        Hobbies: ["Reading"]
+    },
+    {
+        RollNo: 10,
+        StudentName: "Jack",
+        Age: 17,
+        Branch: "Civil",
+        Address: { City: "Mumbai", State: "Maharashtra" },
+        Hobbies: ["Gaming", "Music"]
+    }
+]);
+
+3)
+db.Students.find().pretty();
+
+4)
+db.Students.find({ Age: { $gt: 15 } }).pretty();
+
+5)
+db.Students.find().sort({ StudentName: 1 }).pretty();
+
+6)
+db.Students.updateOne(
+    { RollNo: 3 },
+    { $set: { Branch: "Information Technology" } }
+);
+
+7)
+db.Students.deleteOne({ RollNo: 1 });
+
+8)
+db.Students.find({ StudentName: { $regex: '^A' } }).pretty();
+
+9)
+db.Students.countDocuments();
+
+10)
+db.Students.find().limit(5).pretty();
+
+11)
+db.Students.find().skip(3).pretty();
+12)
+db.Students.find({ "Address.City": "Pune" }, { StudentName: 1, _id: 0 }).pretty();
+13)
+db.Students.find({}, { StudentName: 1, _id: 0 }).pretty();
+14)
+db.Students.drop();
+
+--------------------
+
+Assign 16
+
+// Create database
+use department;
+
+// Create collection and insert sample documents
+db.teacher.insertMany([
+    {
+        name: "Alice",
+        department: "Computer Science",
+        experience: 5,
+        salary: 80000
+    },
+    {
+        name: "Bob",
+        department: "Mathematics",
+        experience: 3,
+        salary: 60000
+    },
+    {
+        name: "Charlie",
+        department: "Computer Science",
+        experience: 7,
+        salary: 90000
+    },
+    {
+        name: "David",
+        department: "Physics",
+        experience: 4,
+        salary: 55000
+    },
+    {
+        name: "Eve",
+        department: "Mathematics",
+        experience: 10,
+        salary: 75000
+    },
+    {
+        name: "Frank",
+        department: "Physics",
+        experience: 2,
+        salary: 50000
+    }
+]);
+
+3)
+db.teacher.aggregate([
+    {
+        $group: {
+            _id: "$department",
+            average_salary: { $avg: "$salary" }
+        }
+    }
+]);
+
+4)
+db.teacher.aggregate([
+    {
+        $group: {
+            _id: "$department",
+            employee_count: { $sum: 1 }
+        }
+    }
+]);
+
+5)
+db.teacher.aggregate([
+    {
+        $group: {
+            _id: "$department",
+            minimum_salary: { $min: "$salary" }
+        }
+    }
+]);
+
+6)
+db.teacher.createIndex({ department: 1 });
+
+7)
+db.teacher.dropIndex("department_1");  // Replace with the correct index name if necessary
+
+-----------------------------------
+
+Assign 21
+
+
+1)
+db.orderinfo.updateMany(
+    {},  // Match all documents
+    { $set: { Age: 30 } }  // Set Age to 30 (or any default value)
+);
+
+2)
+db.orderinfo.createIndex({ cust_id: 1, status: 1 });
+
+3)
+db.orderinfo.aggregate([
+    {
+        $group: {
+            _id: { cust_id: "$cust_id" },  // Group by cust_id
+            doc: { $first: "$$ROOT" }  // Keep the first document
+        }
+    },
+    {
+        $replaceRoot: { newRoot: "$doc" }  // Replace the root document
+    },
+    {
+        $out: "orderinfo_temp"  // Output to a temporary collection
+    }
+]);
+
+// Now drop the original collection and rename the temporary collection
+db.orderinfo.drop();
+db.orderinfo_temp.renameCollection("orderinfo");
+
+4)
+db.orderinfo.aggregate([
+    {
+        $group: {
+            _id: "$status",
+            average_price: { $avg: "$price" }
+        }
+    }
+]);
+
+5)
+db.orderinfo.updateMany(
+    { status: "B" },
+    { $set: { cust_name: "NewName" } }  // Replace "NewName" with the desired name
+);
+
+
+------------------------------------------------------
+Assign 22
+
+// Create the collection and insert a sample document
+use myDatabase;  // Switch to your database (replace with your database name)
+
+db.orderinfo.insertMany([
+    { cust_id: 123, cust_name: "abc", status: "A", price: 250 },
+    { cust_id: 124, cust_name: "def", status: "B", price: 300 },
+    { cust_id: 125, cust_name: "ghi", status: "A", price: 400 },
+    { cust_id: 126, cust_name: "jkl", status: "C", price: 200 }
+]);
+
+1)
+db.orderinfo.find(
+    { price: { $gte: 250, $lte: 450 } },
+    { cust_name: 1, _id: 0 }  // Projection to show only cust_name
+);
+
+2)
+db.orderinfo.updateOne(
+    { cust_id: 123 },
+    { $inc: { price: 10 } }  // Increment price by 10
+);
+
+db.orderinfo.updateOne(
+    { cust_id: 124 },
+    { $inc: { price: -5 } }  // Decrement price by 5
+);
+
+3)
+db.orderinfo.updateMany(
+    {},
+    { $unset: { status: "" } }  // Removes the 'status' field
+);
+
+4)
+db.orderinfo.find(
+    { $or: [ { status: "A" }, { price: 250 } ] },
+    { cust_name: 1, _id: 0 }  // Projection to show only cust_name
+);
+
+
+
